@@ -11,7 +11,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="assets/styles.css">
-  <script>document.documentElement.classList.remove('no-js')</script>
+  <script>
+    (function () {
+      var d = document.documentElement, p = null;
+      d.classList.remove('no-js');
+      try { p = new URLSearchParams(location.search).get('path'); } catch (e) {}
+      if (p !== 'desktop' && p !== 'terminal') { try { p = JSON.parse(localStorage.getItem('fg-path')); } catch (e) {} }
+      d.dataset.path = (p === 'desktop') ? 'desktop' : 'terminal';
+    })();
+  </script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -29,7 +37,13 @@
         <li><a href="#videos">Videos</a></li>
       </ul>
     </nav>
-    <a class="btn btn-primary btn-sm" href="#setup">Start setup <span class="arrow">→</span></a>
+    <div class="nav-right">
+      <div class="seg" role="group" aria-label="Choose your path">
+        <button type="button" data-set-path="terminal" aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3.5 3.5L3 11.5M8.5 12H13"/></svg>Terminal</button>
+        <button type="button" data-set-path="desktop" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="9" rx="1.6"/><path d="M5.5 14h5" stroke-linecap="round"/></svg>Desktop app</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="#setup">Start setup <span class="arrow">→</span></a>
+    </div>
   </div>
 </header>
 
@@ -40,16 +54,37 @@
       <div>
         <span class="eyebrow">A beginner's field guide</span>
         <h1>Put Claude to work <em>on your own computer.</em></h1>
-        <p class="lede">Set up the tools, learn the dozen commands that matter, and ship your first project with Claude Code. No coding background needed. Claude walks you through the hard parts.</p>
+        <p class="lede" data-path-only="terminal">Set up the tools, learn the dozen commands that matter, and ship your first project with Claude Code. No coding background needed. Claude walks you through the hard parts.</p>
+        <p class="lede" data-path-only="desktop">Install one app, point it at a folder, and ship your first project with Claude. No terminal and no coding background needed. You click, review and approve, and Claude does the rest.</p>
         <div class="actions">
           <a class="btn btn-primary" href="#setup">Start with step 01 <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href="#commands">Browse commands</a>
         </div>
         <a class="cue" href="#surfaces"><i></i>Scroll to explore</a>
       </div>
-      <div class="term" aria-label="Example terminal session" role="img">
+      <div class="term" aria-label="Example terminal session" role="img" data-path-only="terminal">
         <div class="term-bar"><b></b><b></b><b></b><span>~/claude/my-first-project</span></div>
         <div class="term-body" id="termBody"></div>
+      </div>
+      <div class="app" aria-label="Example session in the Claude desktop app's Code tab" role="img" data-path-only="desktop">
+        <div class="app-bar"><b></b><b></b><b></b><span>Claude</span></div>
+        <div class="app-grid">
+          <div class="app-side">
+            <span class="t">Chat</span>
+            <span class="t on">Code</span>
+            <span class="h">Sessions</span>
+            <span class="s on">Build field guide</span>
+            <span class="s">Fix font loading</span>
+            <span class="s">Security audit</span>
+          </div>
+          <div class="app-main">
+            <div class="app-msgs" id="appMsgs"></div>
+            <div class="app-prompt">
+              <span class="ph">Reply to Claude…</span>
+              <div class="app-chips"><i>Local</i><i>my-first-project</i><i class="g">Auto</i><i>Opus 5.5</i></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -66,7 +101,7 @@
           <span class="eyebrow">Three ways in</span>
           <h2>Same Claude. <em>Different reach.</em></h2>
         </div>
-        <p class="lede">Claude comes in three apps. The difference is how much of your computer it can see and change.</p>
+        <p class="lede">Claude comes in three apps. The difference is how much of your computer it can see and change. This guide has a full path for the <b>terminal</b> and one for the <b>desktop app</b>. Pick one and the rest of the page follows.</p>
       </div>
       <div class="surfaces">
         <article class="surface reveal">
@@ -80,18 +115,20 @@
           </ul>
           <span class="tag">Easiest</span>
         </article>
-        <article class="surface reveal">
+        <article class="surface reveal" data-surface="desktop">
           <div class="num serif">02</div>
           <h3>Claude desktop app</h3>
-          <p class="muted">The middle ground: a friendly app that can work in folders on your Mac.</p>
+          <p class="muted">Everything in a friendly app, including Claude Code in its <b>Code</b> tab.</p>
           <ul>
-            <li>Visual previews, artifacts and connectors (Gmail, Drive, Wispr Flow)</li>
-            <li>Reads and writes files in folders you link</li>
+            <li>Chat works in folders you choose and with connectors (Gmail, Drive, Wispr Flow)</li>
+            <li>The Code tab gives you Claude Code with buttons, a change viewer and a live preview</li>
+            <li>Nothing to install beyond the app itself</li>
             <li>Only works while the app is open and online</li>
           </ul>
-          <span class="tag">Visual</span>
+          <button class="btn btn-ghost btn-sm use use-btn" type="button" data-set-path="desktop">Use the desktop path <span class="arrow">→</span></button>
+          <span class="tag current use">Your path · Visual</span>
         </article>
-        <article class="surface feature reveal">
+        <article class="surface reveal" data-surface="terminal">
           <div class="num serif">03</div>
           <h3>Claude Code, in the terminal</h3>
           <p class="muted">An agent that lives in your project folder.</p>
@@ -101,7 +138,8 @@
             <li>Best for building, bulk file work and automation</li>
             <li>Text only. Learning the permissions takes a day.</li>
           </ul>
-          <span class="tag">Fastest · this guide's focus</span>
+          <button class="btn btn-ghost btn-sm use use-btn" type="button" data-set-path="terminal">Use the terminal path <span class="arrow">→</span></button>
+          <span class="tag current use">Your path · Fastest</span>
         </article>
       </div>
     </div>
@@ -113,9 +151,24 @@
       <div class="section-head reveal">
         <div>
           <span class="eyebrow">Setup checklist</span>
-          <h2>Eight steps. <em>About an hour.</em></h2>
+          <h2 data-path-only="terminal">Eight steps. <em>About an hour.</em></h2>
+          <h2 data-path-only="desktop">Eight steps. <em>No terminal.</em></h2>
         </div>
-        <p class="lede">Open a step, copy the command, paste it into your terminal and press Enter. Check each step off as you go. This browser remembers where you left off.</p>
+        <p class="lede" data-path-only="terminal">Open a step, copy the command, paste it into your terminal and press Enter. Check each step off as you go. This browser remembers where you left off.</p>
+        <p class="lede" data-path-only="desktop">Open a step, follow the clicks, and paste the prompts into Claude. Check each step off as you go. This browser remembers where you left off on each path.</p>
+      </div>
+
+      <div class="path-pick reveal" role="group" aria-label="Choose your path">
+        <button class="pick" type="button" data-set-path="terminal" aria-pressed="true">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7l5 5-5 5M12.5 18H19"/></svg></span>
+          <span><b>I'll use the terminal</b><span class="d">Fastest once you're comfortable. Typed commands, Claude Code CLI, Conductor.</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
+        <button class="pick" type="button" data-set-path="desktop" aria-pressed="false">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8.5 20.5h7" stroke-linecap="round"/></svg></span>
+          <span><b>I'll use the desktop app</b><span class="d">All visual. The same Claude Code in the Code tab, plus chat with your files and connectors.</span></span>
+          <span class="radio" aria-hidden="true"></span>
+        </button>
       </div>
 
       <div class="progress reveal">
@@ -124,7 +177,7 @@
         <button class="reset" id="resetSteps" type="button">Reset</button>
       </div>
 
-      <ol class="steps" id="steps">
+      <ol class="steps" data-steps="terminal" data-path-only="terminal">
         <li class="step" data-step="1">
           <button class="step-head" type="button" aria-expanded="false">
             <span class="step-num">01</span>
@@ -250,6 +303,129 @@
           </div></div></div>
         </li>
       </ol>
+
+      <ol class="steps" data-steps="desktop" data-path-only="desktop">
+        <li class="step" data-step="1">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">01</span>
+            <span class="step-title">Install the Claude desktop app<small>One download, everything included</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p>Download the app from <a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>, drag it into your Applications folder, open it and sign in with your Claude account. Claude Code is built in, so you have nothing else to install.</p>
+            <p class="tip"><b>You'll need a paid plan</b> (Pro, Max, Ultra, Team or Enterprise) for the Code tab. If clicking <span class="ui">Code</span> shows an upgrade prompt, that's why.</p>
+            <p class="tip"><b>Stuck?</b> Ask Claude in the app itself. It can explain any error you see.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="2">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">02</span>
+            <span class="step-title">Learn the two halves of the app<small>Chat for thinking, Code for building</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p><b>Chat</b> is the regular conversation view, and it can now do real work on your files. Click <span class="ui">Work in a folder</span> in the message bar to let Claude read from a folder and save finished work back to it. Use it for docs, research, data and anything that ends in a file you read.</p>
+            <p>The <b>Code</b> tab is Claude Code with a visual interface. Use it for anything you build: a site, an app, a prototype, a script. It has a change viewer, a live browser preview and parallel sessions.</p>
+            <p class="tip"><b>See separate "Chat" and "Cowork" options?</b> Anthropic is merging them into one and rolling the change out in stages. Until it reaches you, use <span class="ui">Cowork</span> for work on your files.</p>
+            <p class="tip"><b>Guided setup:</b> start a new conversation and type the command below. Claude asks about your role and suggests tools to connect.</p>
+            <div class="code"><code data-prefix="> ">/setup-claude</code><button class="copy" type="button">Copy</button></div>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="3">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">03</span>
+            <span class="step-title">Make a home for your projects<small>Two folders in Finder</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p>Open Finder and press <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>H</kbd> to go to your home folder. Choose <span class="ui">File → New Folder</span>, name it <code>claude</code>, then make a folder inside it for your first project: <code>my-first-project</code>.</p>
+            <p class="tip"><b>No spaces in folder names.</b> Use dashes: <code>ai-workflows-demo</code>. Lots of developer tools still trip over spaces.</p>
+            <p class="tip"><b>One folder per project.</b> Claude treats the folder you open as its whole world, so keep each project's files together.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="4">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">04</span>
+            <span class="step-title">Start your first Code session<small>Point Claude at your folder</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p>Click the <span class="ui">Code</span> tab. In the row under the prompt box, click the first control (the environment) and choose the top <span class="ui">Local</span> entry. Click the folder control next to it, choose <span class="ui">Open folder…</span> and pick <code>my-first-project</code>. Then give Claude a first job:</p>
+            <p class="code-label">Prompt</p>
+            <div class="code prompt"><code>Create a README.md that explains what this project is for and how it's organized. Ask me any questions you have.</code><button class="copy" type="button">Copy</button></div>
+            <p class="tip"><b>Review what changed.</b> When Claude edits files, an indicator like <code>+12 -1</code> appears. Click it to see every change, line by line, and leave comments that Claude will act on.</p>
+            <p class="tip"><b>Steer at any time.</b> Type a correction and press Enter while Claude works, or press <kbd>Esc</kbd> to stop it.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="5">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">05</span>
+            <span class="step-title">Pick your model and how much Claude asks<small>Two menus under the prompt box</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p><b>Model picker</b> (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>I</kbd>): <b>Opus 5.5</b> is the default and the best all-around pick. <b>Fable 5.1</b> is for problems that need hours of work and uses up your plan the fastest. <b>Sonnet</b> and <b>Haiku</b> are lighter and quicker.</p>
+            <p><b>Permission mode</b> (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>M</kbd>) sets how often Claude checks with you:</p>
+            <p class="tip"><b>Manual:</b> approve every change. A good way to start and see how Claude works.</p>
+            <p class="tip"><b>Accept edits:</b> file changes go through, but Claude still asks before running commands.</p>
+            <p class="tip"><b>Plan:</b> Claude proposes an approach without changing anything. Use it before big jobs.</p>
+            <p class="tip"><b>Auto:</b> Claude keeps going and a safety check blocks risky actions. Use it once you trust the flow.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="6">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">06</span>
+            <span class="step-title">Connect GitHub, with Claude leading<small>Like Drive sync for code, plus free hosting</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p>Make a free account at <a href="https://github.com" target="_blank" rel="noopener">github.com</a> and create a new, empty <b>repository</b> (an online folder) with the same name as your project folder. Then, in your Code session, let Claude choose the simplest setup for your Mac:</p>
+            <p class="code-label">Prompt</p>
+            <div class="code prompt"><code>I'm new to git and GitHub. Connect this folder to https://github.com/YOUR-NAME/my-first-project and push the README. Check what's already installed, pick the simplest option for a beginner, and walk me through any one-time sign-in step in plain language. Ask me any questions you have.</code><button class="copy" type="button">Copy</button></div>
+            <p class="tip"><b>Signing in is a one-time step.</b> Claude may open a GitHub page in your browser or show you a short code to enter there. Never paste a password into the chat.</p>
+            <p class="tip"><b>If your Mac asks to install "command line developer tools,"</b> click Install. That's how Macs add git.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="7">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">07</span>
+            <span class="step-title">Run work in parallel with Conductor<small>For building sites and apps</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p><a href="https://conductor.build" target="_blank" rel="noopener">Conductor</a> is a Mac app that runs several Claude sessions at once on the same repo, each with its own copy of the code. It's visual too, so it fits this path: add your repo, click to start a workspace, type a task, then start another.</p>
+            <p class="tip"><b>Use it when you're building something:</b> a site, an app, a prototype. For a doc, a deck or brainstorming, plain chat is simpler.</p>
+            <p class="tip"><b>Inside the Claude app,</b> <span class="ui">+ New</span> (<kbd>⌘</kbd> <kbd>N</kbd>) in the Code tab also starts a parallel session. Turn on <span class="ui">Worktree</span> to give it its own copy of the project.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+
+        <li class="step" data-step="8">
+          <button class="step-head" type="button" aria-expanded="false">
+            <span class="step-num">08</span>
+            <span class="step-title">Connect your tools, and talk instead of type<small>Connectors and Wispr Flow</small></span>
+            <span class="check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+          </button>
+          <div class="step-body"><div class="step-inner"><div class="step-content">
+            <p>Open <span class="ui">Customize → Connectors</span> in the sidebar to link Gmail, Google Drive, Calendar and more. Claude can then read and act on them in both Chat and the Code tab.</p>
+            <p><a href="https://wisprflow.ai" target="_blank" rel="noopener">Wispr Flow</a> turns speech into clean text in any app. Spoken prompts tend to be longer and more detailed, which means fewer rounds of clarification. Its connector also lets Claude read your meeting notes.</p>
+            <p class="tip"><b>This guide was built that way:</b> Claude read the Wispr Flow transcript of a recorded walkthrough through the connector.</p>
+            <button class="btn btn-ghost btn-sm done-btn" type="button">Mark step done</button>
+          </div></div></div>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -259,18 +435,15 @@
       <div class="section-head reveal">
         <div>
           <span class="eyebrow">Cheat sheet</span>
-          <h2>The commands <em>worth memorizing.</em></h2>
+          <h2 data-path-only="terminal">The commands <em>worth memorizing.</em></h2>
+          <h2 data-path-only="desktop">The shortcuts <em>worth memorizing.</em></h2>
         </div>
-        <p class="lede">Click any card to copy it. Terminal commands run at the <code>$</code> prompt. Slash commands and shortcuts work inside Claude Code.</p>
+        <p class="lede" data-path-only="terminal">Click any card to copy it. Terminal commands run at the <code>$</code> prompt. Slash commands and shortcuts work inside Claude Code.</p>
+        <p class="lede" data-path-only="desktop">Slash commands go in the prompt box (click to copy). Shortcuts work in the Code tab. The app cards show where things live. Press <kbd>⌘</kbd> <kbd>/</kbd> in the app to see every shortcut.</p>
       </div>
       <div class="cheat-controls">
-        <input class="search" id="cmdSearch" type="search" placeholder="Search: folder, model, clear, undo…" aria-label="Search commands">
-        <div class="chips" role="group" aria-label="Filter commands">
-          <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
-          <button class="chip" type="button" data-filter="terminal" aria-pressed="false">Terminal</button>
-          <button class="chip" type="button" data-filter="claude" aria-pressed="false">Claude</button>
-          <button class="chip" type="button" data-filter="keys" aria-pressed="false">Shortcuts</button>
-        </div>
+        <input class="search" id="cmdSearch" type="search" placeholder="Search: folder, model, preview, undo…" aria-label="Search commands">
+        <div class="chips" id="chips" role="group" aria-label="Filter commands"></div>
       </div>
       <div class="cmds" id="cmds" aria-live="polite"></div>
     </div>
@@ -284,7 +457,7 @@
           <span class="eyebrow">Workflows</span>
           <h2>Four ways to <em>actually use it.</em></h2>
         </div>
-        <p class="lede">Each workflow is a short sequence of plain-English prompts. Copy them, swap in your details, and end with <b>"Ask me any questions you have."</b> so Claude checks with you before it guesses.</p>
+        <p class="lede"><span data-path-only="desktop">Shown for the desktop app: Chat for research and data, the Code tab for anything you build. </span>Each workflow is a short sequence of plain-English prompts. Copy them, swap in your details, and end with <b>"Ask me any questions you have."</b> so Claude checks with you before it guesses.</p>
       </div>
       <div class="tabs" role="tablist" aria-label="Workflows">
         <button class="tab" role="tab" type="button" id="t-pages" aria-controls="p-pages" aria-selected="true">Ship a site on GitHub Pages</button>
@@ -303,7 +476,25 @@
             <li>Result: <code>your-name.github.io/project</code></li>
           </ul>
         </div>
-        <ol class="flow">
+        <ol class="flow" data-path-only="desktop">
+          <li><h4>Describe what you want</h4>
+            <p>In the <span class="ui">Code</span> tab, open a session on your project folder (connected to its repo in setup step 06) and explain the site the way you'd brief a designer.</p>
+            <div class="code prompt"><code>Help me build a one-page website for [what it's for]. Audience: [who]. Sections: [list]. Style: [a site you like]. Keep it plain HTML/CSS/JS so it works on GitHub Pages. Ask me any questions you have.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Preview it in the app</h4>
+            <p>Click <code>index.html</code> wherever Claude mentions it in the chat and the site opens in the built-in <span class="ui">Browser</span> pane (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>B</kbd>). Claude can see the preview too and fix what it notices.</p>
+            <div class="code prompt"><code>Open the site in the Browser pane and check it at phone width. Fix anything that looks broken.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Publish</h4>
+            <p>Let Claude handle the git steps and the Pages setting.</p>
+            <div class="code prompt"><code>Commit everything, push to main, and turn on GitHub Pages for this repo from the main branch. Tell me the live URL when it's up.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Point at what to change</h4>
+            <p>Press <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>S</kbd>, click any element in the Browser pane to select it, then describe the change. You don't need to know what the code calls it.</p>
+            <div class="code prompt"><code>Make this headline one line on mobile, then push the change.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+        </ol>
+        <ol class="flow" data-path-only="terminal">
           <li><h4>Describe what you want</h4>
             <p>In a new project folder, connected to its repo, run <code>claude</code> and explain the site the way you'd brief a designer.</p>
             <div class="code prompt"><code>Help me build a one-page website for [what it's for]. Audience: [who]. Sections: [list]. Style: [a site you like]. Keep it plain HTML/CSS/JS so it works on GitHub Pages. Ask me any questions you have.</code><button class="copy" type="button">Copy</button></div>
@@ -333,7 +524,24 @@
             <li>Ask for quotes so you can check its work</li>
           </ul>
         </div>
-        <ol class="flow">
+        <ol class="flow" data-path-only="desktop">
+          <li><h4>Synthesize the research, in Chat</h4>
+            <p>Start a new conversation, click <span class="ui">Work in a folder</span> and choose your <code>research</code> folder. Your files never need uploading.</p>
+            <div class="code prompt"><code>Read every file in this folder. Pull out the top 5 user pain points, ranked by how often they come up, with 2 direct quotes each and the file each quote came from.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Pressure-test the plan</h4>
+            <p>Install the <code>/grill-me</code> skill once from the Code tab (see <a href="#skills">Skills</a>), then have it question you one decision at a time.</p>
+            <div class="code prompt"><code>/grill-me I want to add a self-serve onboarding flow for new customers. Here's my rough plan: [plan]</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Write the brief</h4>
+            <div class="code prompt"><code>Turn what we agreed into a one-page product brief and save it to this folder as brief.md: problem, who it's for, success metrics, scope, non-goals, open questions.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Make it clickable, in Code</h4>
+            <p>Open a Code session on the same folder. The prototype opens right in the Browser pane, so you can click through it and point at what to change.</p>
+            <div class="code prompt"><code>Build a clickable HTML prototype of the onboarding flow in brief.md. Three screens, real copy, no backend. Open it in the Browser pane when it's ready.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+        </ol>
+        <ol class="flow" data-path-only="terminal">
           <li><h4>Synthesize the research</h4>
             <div class="code prompt"><code>Read every file in ./research. Pull out the top 5 user pain points, ranked by how often they come up, with 2 direct quotes each and the file each quote came from.</code><button class="copy" type="button">Copy</button></div>
           </li>
@@ -360,7 +568,24 @@
             <li>Save the analysis as a script to rerun next month</li>
           </ul>
         </div>
-        <ol class="flow">
+        <ol class="flow" data-path-only="desktop">
+          <li><h4>Point Chat at the data</h4>
+            <p>Start a conversation, click <span class="ui">Work in a folder</span> and choose the folder with your export. If the data lives in Google Sheets, connect it under <span class="ui">Customize → Connectors</span> instead.</p>
+            <div class="code prompt"><code>Look at sales.csv. Tell me what each column is, how many rows there are, and anything odd (missing values, duplicates, outliers). Don't change anything yet.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Ask real questions</h4>
+            <div class="code prompt"><code>Which 3 products grew fastest quarter over quarter, and which region drove it? Show the numbers in a table and explain how you calculated them.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Visualize it</h4>
+            <p>Claude can build an interactive dashboard that you view right in the app and save into your folder.</p>
+            <div class="code prompt"><code>Make an interactive dashboard with charts for monthly revenue, top products and regional split. Readable on a phone. Save it to this folder as dashboard.html.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+          <li><h4>Put it on a schedule</h4>
+            <p>In the Code tab, scheduled tasks rerun a job on their own, such as a monthly report.</p>
+            <div class="code prompt"><code>Turn this analysis into a script, then set up a scheduled task that reruns it on the 1st of every month on the newest export in this folder.</code><button class="copy" type="button">Copy</button></div>
+          </li>
+        </ol>
+        <ol class="flow" data-path-only="terminal">
           <li><h4>Profile the data first</h4>
             <div class="code prompt"><code>Look at sales.csv. Tell me what each column is, how many rows there are, and anything odd (missing values, duplicates, outliers). Don't change anything yet.</code><button class="copy" type="button">Copy</button></div>
           </li>
@@ -380,6 +605,7 @@
         <div class="panel-intro">
           <p class="big">Start a task. <em class="serif">Start another.</em></p>
           <p class="muted">In Conductor, each workspace runs its own Claude session on the same repo, so separate jobs don't step on each other. Here are the two tasks from the original walkthrough, run side by side on a live church website.</p>
+          <p class="muted" data-path-only="desktop">Prefer to stay in the Claude app? In the Code tab, <span class="ui">+ New</span> (<kbd>⌘</kbd> <kbd>N</kbd>) with <span class="ui">Worktree</span> turned on does the same job. To watch two sessions side by side, hold <kbd>⌥</kbd> and click a session in the sidebar.</p>
           <ul>
             <li>One task per workspace</li>
             <li>No need to name the project, the repo is the context</li>
@@ -416,18 +642,24 @@
         <article class="skill reveal">
           <div class="skill-top"><span class="name">/grill-me</span><span class="tag">Community favorite</span></div>
           <p>Before Claude writes anything, it interviews you about your plan, one question at a time, each with a suggested answer. It keeps going until every branch is settled. This catches vague requirements before they turn into rework.</p>
-          <div class="code"><code data-prefix="$ ">npx skills add https://github.com/mattpocock/skills --skill grill-me</code><button class="copy" type="button">Copy</button></div>
+          <div class="code" data-path-only="terminal"><code data-prefix="$ ">npx skills add https://github.com/mattpocock/skills --skill grill-me</code><button class="copy" type="button">Copy</button></div>
+          <div class="code prompt" data-path-only="desktop"><code>Install the grill-me skill from https://github.com/mattpocock/skills as a personal skill so I can use /grill-me in every project.</code><button class="copy" type="button">Copy</button></div>
+          <p class="src" data-path-only="desktop">Paste this into a Code tab session. Claude handles the download.</p>
           <p class="src">By Matt Pocock · <a href="https://github.com/mattpocock/skills" target="_blank" rel="noopener">github.com/mattpocock/skills</a></p>
         </article>
         <article class="skill reveal">
           <div class="skill-top"><span class="name">skill-creator</span><span class="tag">Anthropic</span></div>
-          <p>A skill that writes skills. Describe something you do repeatedly and it drafts the skill, tests it and refines the trigger description. Add Anthropic's skills collection, then ask for it:</p>
-          <div class="code"><code data-prefix="> ">/plugin marketplace add anthropics/skills</code><button class="copy" type="button">Copy</button></div>
+          <p>A skill that writes skills. Describe something you do repeatedly and it drafts the skill, tests it and refines the trigger description.</p>
+          <p data-path-only="terminal">Add Anthropic's skills collection, then ask for it:</p>
+          <div class="code" data-path-only="terminal"><code data-prefix="> ">/plugin marketplace add anthropics/skills</code><button class="copy" type="button">Copy</button></div>
+          <p data-path-only="desktop">In the app, open <span class="ui">Customize</span> in the sidebar to browse skills and plugins, including Anthropic's, and turn them on. Or just ask:</p>
+          <div class="code prompt" data-path-only="desktop"><code>Make me a skill that [does the thing I keep asking for]. Ask me any questions you have.</code><button class="copy" type="button">Copy</button></div>
           <p class="src">The collection also includes skills for PDF, Word, Excel and PowerPoint files, plus frontend design · <a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">github.com/anthropics/skills</a></p>
         </article>
         <article class="skill reveal">
           <div class="skill-top"><span class="name">/code-review · /security-review</span><span class="tag">Built in</span></div>
           <p>Built into Claude Code. Run <code>/code-review</code> after a change to catch bugs before you push, and <code>/security-review</code> before anything goes public.</p>
+          <p data-path-only="desktop">In the Code tab, the review comes back as a card. Click <span class="ui">Walk through in diff</span> to step through each finding, or <span class="ui">Apply fixes</span> to have Claude fix them all.</p>
         </article>
         <article class="skill reveal">
           <div class="skill-top"><span class="name">/init</span><span class="tag">Built in</span></div>
@@ -437,7 +669,8 @@
 
       <div class="reveal">
         <h3 style="margin-bottom:8px">Build your own skill</h3>
-        <p class="muted" style="margin-bottom:24px">Fill this in and copy the result. Save it as <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code> and Claude can use it in every project. You can also just ask Claude, "Make me a skill that…"</p>
+        <p class="muted" style="margin-bottom:24px" data-path-only="terminal">Fill this in and copy the result. Save it as <code>~/.claude/skills/&lt;name&gt;/SKILL.md</code> and Claude can use it in every project. You can also just ask Claude, "Make me a skill that…"</p>
+        <p class="muted" style="margin-bottom:24px" data-path-only="desktop">Fill this in, then click <span class="ui">Copy as prompt</span> and paste it into a Code tab session. Claude saves it as a personal skill you can use in every project. You can also just ask Claude, "Make me a skill that…"</p>
       </div>
       <div class="builder reveal">
         <form id="skillForm" autocomplete="off">
@@ -456,9 +689,12 @@ End with the three most important next steps.</textarea>
           </label>
         </form>
         <div class="out">
-          <div class="out-head"><span id="sPath">~/.claude/skills/weekly-recap/SKILL.md</span><button class="copy" type="button" id="copySkill">Copy file</button></div>
+          <div class="out-head"><span id="sPath">~/.claude/skills/weekly-recap/SKILL.md</span>
+            <button class="copy" type="button" id="copySkill" data-path-only="terminal">Copy file</button>
+            <button class="copy" type="button" id="copySkillPrompt" data-path-only="desktop">Copy as prompt</button>
+          </div>
           <pre id="sOut"></pre>
-          <div class="code" style="background:#ffffff0d"><code data-prefix="$ " id="sMkdir">mkdir -p ~/.claude/skills/weekly-recap</code><button class="copy" type="button">Copy</button></div>
+          <div class="code" style="background:#ffffff0d" data-path-only="terminal"><code data-prefix="$ " id="sMkdir">mkdir -p ~/.claude/skills/weekly-recap</code><button class="copy" type="button">Copy</button></div>
         </div>
       </div>
     </div>
@@ -489,7 +725,7 @@ End with the three most important next steps.</textarea>
             <div class="stack long" id="stLong"></div>
           </div>
           <div class="viz-row">
-            <div class="lbl"><span>A fresh session per task <code style="color:var(--spring)">/clear</code></span><b id="vShort">0</b></div>
+            <div class="lbl"><span>A fresh session per task <code style="color:var(--spring)" data-path-only="terminal">/clear</code><code style="color:var(--spring)" data-path-only="desktop">⌘N</code></span><b id="vShort">0</b></div>
             <div class="stack short" id="stShort"></div>
           </div>
           <p class="verdict" id="verdict"></p>
@@ -497,9 +733,11 @@ End with the three most important next steps.</textarea>
         </div>
       </div>
       <div class="habits">
-        <div class="habit reveal"><code>/clear</code><p>Finished a task? Clear the conversation before starting the next one.</p></div>
+        <div class="habit reveal" data-path-only="terminal"><code>/clear</code><p>Finished a task? Clear the conversation before starting the next one.</p></div>
+        <div class="habit reveal" data-path-only="desktop"><code>+ New · ⌘N</code><p>Finished a task? Start a new session (or new chat) for the next one instead of continuing the old one.</p></div>
         <div class="habit reveal"><code>/compact</code><p>Need to keep going on the same task? Compact summarizes the history so it's lighter to carry.</p></div>
-        <div class="habit reveal"><code>/context</code><p>Shows how full the current session is and what's taking up the space.</p></div>
+        <div class="habit reveal" data-path-only="terminal"><code>/context</code><p>Shows how full the current session is and what's taking up the space.</p></div>
+        <div class="habit reveal" data-path-only="desktop"><code>Usage ring</code><p>The ring under the prompt box shows your plan usage. <code>/context</code> shows how full this session is.</p></div>
         <div class="habit reveal"><code>Brief well</code><p>Put the goal, constraints and examples in the first message. Dictating it with Wispr Flow makes long briefs painless.</p></div>
       </div>
     </div>
@@ -523,7 +761,7 @@ End with the three most important next steps.</textarea>
   <div class="wrap">
     <div class="stats">
       <div class="stat reveal"><span class="n" data-count="8">0</span><span class="l">setup steps to a working AI workflow</span></div>
-      <div class="stat reveal"><span class="n" data-count="0" data-suffix="">0</span><span class="l">files uploaded. Claude Code works on your machine.</span></div>
+      <div class="stat reveal"><span class="n" data-count="2">0</span><span class="l">paths, terminal or desktop app, to the same Claude Code</span></div>
       <div class="stat reveal"><span class="n" data-count="1">0</span><span class="l">task per session. The habit that keeps your plan going.</span></div>
     </div>
   </div>
@@ -532,7 +770,8 @@ End with the three most important next steps.</textarea>
   <section class="cta">
     <div class="wrap">
       <span class="eyebrow">Ready?</span>
-      <h2>Open a terminal. <em>Start building.</em></h2>
+      <h2 data-path-only="terminal">Open a terminal. <em>Start building.</em></h2>
+      <h2 data-path-only="desktop">Open the app. <em>Start building.</em></h2>
       <p class="lede">Stuck at any point? Ask Claude. "Give me the command to…" works for almost everything on this page.</p>
       <a class="btn btn-primary" href="#setup">Back to step 01 <span class="arrow">→</span></a>
     </div>
