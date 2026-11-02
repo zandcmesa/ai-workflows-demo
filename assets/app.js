@@ -59,6 +59,10 @@
   const nav = $('#nav');
   addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
 
+  /* ---------- Hero video ---------- */
+  const heroVideo = $('#heroVideo');
+  if (heroVideo && reduced) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); }
+
   /* ---------- Ticker ---------- */
   const items = ['Claude Code', 'Desktop app', 'Homebrew', 'Ghostty', 'GitHub', 'Conductor', 'Wispr Flow', 'Skills', '/clear', 'Connectors'];
   const one = items.map((t, i) => `<span>${i % 2 ? `<em>${t}</em>` : t},</span>`).join('');
